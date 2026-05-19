@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Slalom Ranking</title>
+</head>
+<body>
+<h1>Slalom Ranking</h1>
+
+<p><a th:href="@{/competitions/{id}(id=${competition.id})}">Back to Competition Details</a></p>
+<p><a href="/competitions">Back to Competitions List</a></p>
+
+<section>
+    <p><strong>Competition:</strong> <span th:text="${competition.name}">Slalom Race</span></p>
+    <p><strong>Date:</strong> <span th:text="${#temporals.format(competition.competitionDate, 'dd.MM.yyyy')}">01.01.2030</span></p>
+    <p><strong>Status:</strong> <span th:text="${competition.status}">FINISHED</span></p>
+</section>
+
+<div th:if="${#lists.isEmpty(ranking)}">
+    <p>No ranking has been published yet.</p>
+</div>
+
+<table th:if="${!#lists.isEmpty(ranking)}" border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Rank</th>
+        <th>Athlete</th>
+        <th>Registration ID</th>
+        <th>Total Time</th>
+        <th>DNF</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="entry : ${ranking}">
+        <td th:text="${entry.rank != null ? entry.rank : '-'}">1</td>
+        <td th:text="${entry.athleteFullName}">Athlete Name</td>
+        <td th:text="${entry.registrationId}">10</td>
+        <td th:text="${entry.totalTime != null ? entry.totalTime : '-'}">120.000</td>
+        <td th:text="${entry.dnf ? 'YES' : 'NO'}">NO</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+

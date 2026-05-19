@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Competitions</title>
+</head>
+<body>
+<h1>Competitions</h1>
+
+<p><a href="/olympics">Olympic Games</a></p>
+
+<p>
+    <a th:href="@{/competitions}" th:if="${selectedType != 'all'}">All</a>
+    <strong th:if="${selectedType == 'all'}">All</strong>
+    |
+    <a th:href="@{/competitions(type='slalom')}" th:if="${selectedType != 'slalom'}">Only Slalom</a>
+    <strong th:if="${selectedType == 'slalom'}">Only Slalom</strong>
+    |
+    <a th:href="@{/competitions(type='biathlon')}" th:if="${selectedType != 'biathlon'}">Only Biathlon</a>
+    <strong th:if="${selectedType == 'biathlon'}">Only Biathlon</strong>
+</p>
+
+<div th:if="${#lists.isEmpty(competitions)}">
+    <p th:if="${selectedType == 'all'}">No competitions available yet.</p>
+    <p th:if="${selectedType == 'slalom'}">No slalom competitions available yet.</p>
+    <p th:if="${selectedType == 'biathlon'}">No biathlon competitions available yet.</p>
+</div>
+
+<table th:if="${!#lists.isEmpty(competitions)}" border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Gender</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Olympics ID</th>
+        <th>Olympics Name</th>
+        <th th:if="${isAthlete}">My Registration</th>
+        <th>Details</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="competition : ${competitions}">
+        <td th:text="${competition.name}">Name</td>
+        <td th:text="${competition.competitionType}">Type</td>
+        <td th:text="${competition.genderCategory}">Gender</td>
+        <td th:text="${#temporals.format(competition.competitionDate, 'dd.MM.yyyy')}">01.01.2030</td>
+        <td th:text="${competition.status}">Status</td>
+        <td th:text="${competition.olympicGamesId}">1</td>
+        <td th:text="${olympicsById[competition.olympicGamesId] != null ? olympicsById[competition.olympicGamesId] : '-'}">Olympics Name</td>
+        <td th:if="${isAthlete}">
+            <span th:if="${registeredCompetitionIds.contains(competition.id)}" style="color: green;">REGISTERED</span>
+            <span th:if="${!registeredCompetitionIds.contains(competition.id)}" style="color: #666;">NOT REGISTERED</span>
+        </td>
+        <td><a th:href="@{/competitions/{id}(id=${competition.id})}">Open</a></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+
+

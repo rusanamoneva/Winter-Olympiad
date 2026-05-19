@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Olympic Games</title>
+</head>
+<body>
+<h1>Olympic Games</h1>
+
+<p><a href="/athlete/profile">My Athlete Profile</a></p>
+
+<div th:if="${#lists.isEmpty(olympics)}">
+    <p>No Olympic games available yet.</p>
+</div>
+
+<table th:if="${!#lists.isEmpty(olympics)}" border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Details</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="games : ${olympics}">
+        <td th:text="${games.name}">Name</td>
+        <td th:text="${games.location}">Location</td>
+        <td th:text="${#temporals.format(games.startDate, 'dd.MM.yyyy')}">01.01.2030</td>
+        <td th:text="${#temporals.format(games.endDate, 'dd.MM.yyyy')}">15.01.2030</td>
+        <td><a th:href="@{/olympics/{id}(id=${games.id})}">Open</a></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+

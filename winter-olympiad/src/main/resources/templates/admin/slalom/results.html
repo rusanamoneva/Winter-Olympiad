@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Slalom Result Entry</title>
+</head>
+<body>
+<div th:replace="fragments/header :: adminHeader"></div>
+
+<h1>Slalom Result Entry</h1>
+
+<p><a href="/admin/competitions">Back to Competitions Management</a></p>
+
+<section>
+    <p><strong>Competition:</strong> <span th:text="${competition.name}">Slalom Race</span></p>
+    <p><strong>Status:</strong> <span th:text="${competition.status}">IN_PROGRESS</span></p>
+    <p><strong>Date:</strong> <span th:text="${#temporals.format(competition.competitionDate, 'dd.MM.yyyy')}">01.01.2030</span></p>
+</section>
+
+<p th:if="${successMessage}" th:text="${successMessage}" style="color: green;"></p>
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+
+<section>
+    <h2>Run 1</h2>
+    <form th:action="@{/admin/slalom/{id}/run1(id=${competition.id})}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <label>
+            Athlete:
+            <select name="registrationId" required>
+                <option value="">Select athlete</option>
+                <option th:each="registration : ${registrations}"
+                        th:value="${registration.id}"
+                        th:text="${registration.athleteFullName + ' (ID: ' + registration.id + ')'}">
+                </option>
+            </select>
+        </label>
+        <label>Run 1 Time (seconds): <input type="number" name="run1Time" min="0.001" step="0.001" required/></label>
+        <button type="submit">Save Run 1</button>
+    </form>
+
+    <form th:action="@{/admin/slalom/{id}/run1/dnf(id=${competition.id})}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <label>
+            Athlete:
+            <select name="registrationId" required>
+                <option value="">Select athlete</option>
+                <option th:each="registration : ${registrations}"
+                        th:value="${registration.id}"
+                        th:text="${registration.athleteFullName + ' (ID: ' + registration.id + ')'}">
+                </option>
+            </select>
+        </label>
+        <button type="submit">Mark Run 1 DNF</button>
+    </form>
+</section>
+
+<section>
+    <h2>Run 2 Qualification</h2>
+    <form th:action="@{/admin/slalom/{id}/run2/qualify(id=${competition.id})}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <label>Top N: <input type="number" name="topN" min="1" required/></label>
+        <button type="submit">Qualify for Run 2</button>
+    </form>
+
+    <h3>Qualified Athletes</h3>
+    <div th:if="${#lists.isEmpty(qualified)}">
+        <p>No qualified athletes yet.</p>
+    </div>
+    <table th:if="${!#lists.isEmpty(qualified)}" border="1" cellpadding="6" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Registration ID</th>
+            <th>Athlete</th>
+            <th>Run 1 Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${qualified}">
+            <td th:text="${entry.registrationId}">1</td>
+            <td th:text="${entry.athleteFullName}">Athlete Name</td>
+            <td th:text="${entry.run1Time}">50.100</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Run 2</h2>
+    <form th:action="@{/admin/slalom/{id}/run2(id=${competition.id})}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <label>
+            Athlete:
+            <select name="registrationId" required>
+                <option value="">Select athlete</option>
+                <option th:each="registration : ${registrations}"
+                        th:value="${registration.id}"
+                        th:text="${registration.athleteFullName + ' (ID: ' + registration.id + ')'}">
+                </option>
+            </select>
+        </label>
+        <label>Run 2 Time (seconds): <input type="number" name="run2Time" min="0.001" step="0.001" required/></label>
+        <button type="submit">Save Run 2</button>
+    </form>
+
+    <form th:action="@{/admin/slalom/{id}/run2/dnf(id=${competition.id})}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <label>
+            Athlete:
+            <select name="registrationId" required>
+                <option value="">Select athlete</option>
+                <option th:each="registration : ${registrations}"
+                        th:value="${registration.id}"
+                        th:text="${registration.athleteFullName + ' (ID: ' + registration.id + ')'}">
+                </option>
+            </select>
+        </label>
+        <button type="submit">Mark Run 2 DNF</button>
+    </form>
+
+    <h3>Run 2 Start Order</h3>
+    <div th:if="${#lists.isEmpty(run2StartOrder)}">
+        <p>No start order available yet.</p>
+    </div>
+    <table th:if="${!#lists.isEmpty(run2StartOrder)}" border="1" cellpadding="6" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Registration ID</th>
+            <th>Athlete</th>
+            <th>Run 1 Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${run2StartOrder}">
+            <td th:text="${entry.registrationId}">1</td>
+            <td th:text="${entry.athleteFullName}">Athlete Name</td>
+            <td th:text="${entry.run1Time}">50.100</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Finalize Ranking</h2>
+    <form th:action="@{/admin/slalom/{id}/ranking/calculate(id=${competition.id})}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit">Calculate Final Ranking</button>
+    </form>
+</section>
+
+<section>
+    <h2>Registered Athletes</h2>
+    <div th:if="${#lists.isEmpty(registrations)}">
+        <p>No registrations for this competition yet.</p>
+    </div>
+    <table th:if="${!#lists.isEmpty(registrations)}" border="1" cellpadding="6" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Registration ID</th>
+            <th>Athlete</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="registration : ${registrations}">
+            <td th:text="${registration.id}">1</td>
+            <td th:text="${registration.athleteFullName}">Athlete Name</td>
+            <td th:text="${registration.status}">REGISTERED</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Current Ranking Preview</h2>
+    <div th:if="${#lists.isEmpty(ranking)}">
+        <p>No ranking data yet.</p>
+    </div>
+    <table th:if="${!#lists.isEmpty(ranking)}" border="1" cellpadding="6" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Athlete</th>
+            <th>Registration ID</th>
+            <th>Total Time</th>
+            <th>DNF</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${ranking}">
+            <td th:text="${entry.rank != null ? entry.rank : '-'}">1</td>
+            <td th:text="${entry.athleteFullName}">Athlete Name</td>
+            <td th:text="${entry.registrationId}">10</td>
+            <td th:text="${entry.totalTime != null ? entry.totalTime : '-'}">120.000</td>
+            <td th:text="${entry.dnf ? 'YES' : 'NO'}">NO</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+</body>
+</html>
+

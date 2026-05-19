@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Olympic Games</title>
+</head>
+<body>
+<div th:replace="fragments/header :: adminHeader"></div>
+
+<h1>Manage Olympic Games</h1>
+
+<p><a href="/admin/dashboard">Back to Admin Dashboard</a></p>
+<p><a href="/admin/olympics/new">Create New Olympic Games</a></p>
+
+<p th:if="${successMessage}" th:text="${successMessage}" style="color: green;"></p>
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+
+<div th:if="${#lists.isEmpty(olympics)}">
+    <p>No Olympic games created yet.</p>
+</div>
+
+<table th:if="${!#lists.isEmpty(olympics)}" border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="games : ${olympics}">
+        <td th:text="${games.name}">Name</td>
+        <td th:text="${games.location}">Location</td>
+        <td th:text="${#temporals.format(games.startDate, 'dd.MM.yyyy')}">01.01.2030</td>
+        <td th:text="${#temporals.format(games.endDate, 'dd.MM.yyyy')}">15.01.2030</td>
+        <td>
+            <a th:href="@{/admin/olympics/{id}/edit(id=${games.id})}">Edit</a>
+            <form th:action="@{/admin/olympics/{id}/delete(id=${games.id})}" method="post" style="display: inline;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

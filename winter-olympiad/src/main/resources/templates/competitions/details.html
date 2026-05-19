@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Competition Details</title>
+</head>
+<body>
+<h1>Competition Details</h1>
+
+<p><a href="/competitions">Back to Competitions List</a></p>
+<p th:if="${isAthlete}"><a href="/athlete/registrations">My Registrations</a></p>
+
+<p th:if="${successMessage}" th:text="${successMessage}" style="color: green;"></p>
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+
+<section>
+    <p><strong>Name:</strong> <span th:text="${competition.name}">Name</span></p>
+    <p><strong>Type:</strong> <span th:text="${competition.competitionType}">Type</span></p>
+    <p><strong>Gender:</strong> <span th:text="${competition.genderCategory}">Gender</span></p>
+    <p><strong>Minimum Age:</strong> <span th:text="${competition.minimumAge}">18</span></p>
+    <p><strong>Date:</strong> <span th:text="${#temporals.format(competition.competitionDate, 'dd.MM.yyyy')}">01.01.2030</span></p>
+    <p><strong>Status:</strong> <span th:text="${competition.status}">PLANNED</span></p>
+    <p><strong>Olympics ID:</strong> <span th:text="${competition.olympicGamesId}">1</span></p>
+</section>
+
+<section th:if="${competition.competitionType == 'SlalomCompetition'}">
+    <h2>Slalom Parameters</h2>
+    <p><strong>Max Second Run Participants:</strong>
+        <span th:text="${competition.maxSecondRunParticipants}">30</span></p>
+    <p><a th:href="@{/competitions/{id}/slalom-ranking(id=${competition.id})}">View Slalom Ranking</a></p>
+    <p><a th:href="@{/admin/slalom/{id}(id=${competition.id})}">Admin Slalom Result Entry</a></p>
+</section>
+
+<section th:if="${competition.competitionType == 'BiathlonCompetition'}">
+    <h2>Biathlon Parameters</h2>
+    <p><strong>Penalty Per Miss (sec):</strong>
+        <span th:text="${competition.penaltyPerMissSeconds}">60.000</span></p>
+    <p><strong>Number of Shootings:</strong>
+        <span th:text="${competition.numberOfShootings}">4</span></p>
+    <p><strong>Number of Laps:</strong>
+        <span th:text="${competition.numberOfLaps}">5</span></p>
+    <p><a th:href="@{/competitions/{id}/biathlon-ranking(id=${competition.id})}">View Biathlon Ranking</a></p>
+    <p><a th:href="@{/admin/biathlon/{id}(id=${competition.id})}">Admin Biathlon Result Entry</a></p>
+</section>
+
+<section th:if="${isAthlete}">
+    <h2>Registration</h2>
+    <form th:if="${!isRegistered}" th:action="@{/athlete/registrations/{competitionId}(competitionId=${competition.id})}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit">Register</button>
+    </form>
+
+    <form th:if="${isRegistered}" th:action="@{/athlete/registrations/{competitionId}/cancel(competitionId=${competition.id})}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit">Cancel Registration</button>
+    </form>
+</section>
+
+</body>
+</html>
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Athlete Profile</title>
+</head>
+<body>
+<div th:replace="fragments/header :: athleteHeader"></div>
+
+<h1>Athlete Profile</h1>
+
+<p th:if="${successMessage}" th:text="${successMessage}" style="color: green;"></p>
+
+<section>
+    <h2>Current Data</h2>
+    <p><strong>Name:</strong> <span th:text="${athlete.firstName + ' ' + athlete.lastName}">Name</span></p>
+    <p><strong>Country:</strong> <span th:text="${athlete.country}">Country</span></p>
+    <p><strong>Gender:</strong> <span th:text="${athlete.gender}">Gender</span></p>
+    <p><strong>Birth Date:</strong> <span th:text="${#temporals.format(athlete.birthDate, 'dd.MM.yyyy')}">Birth Date</span></p>
+</section>
+
+<section>
+    <h2>Update Profile</h2>
+    <form th:action="@{/athlete/profile}" th:object="${athleteForm}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <label>First Name <input type="text" th:field="*{firstName}"/></label>
+        <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" style="color: red;"></span><br/>
+        <label>Last Name <input type="text" th:field="*{lastName}"/></label>
+        <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" style="color: red;"></span><br/>
+        <label>Country <input type="text" th:field="*{country}"/></label>
+        <span th:if="${#fields.hasErrors('country')}" th:errors="*{country}" style="color: red;"></span><br/>
+        <label>Gender
+            <select th:field="*{gender}">
+                <option value="MALE">MALE</option>
+                <option value="FEMALE">FEMALE</option>
+            </select>
+        </label>
+        <span th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" style="color: red;"></span><br/>
+        <label>Birth Date <input type="date" th:field="*{birthDate}"/></label>
+        <span th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}" style="color: red;"></span><br/>
+        <button type="submit">Save</button>
+    </form>
+</section>
+
+<section>
+    <h2>Deactivate Profile</h2>
+    <form th:action="@{/athlete/profile/deactivate}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit">Deactivate</button>
+    </form>
+</section>
+
+</body>
+</html>

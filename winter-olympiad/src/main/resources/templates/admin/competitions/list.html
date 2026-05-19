@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Competitions</title>
+</head>
+<body>
+<div th:replace="fragments/header :: adminHeader"></div>
+
+<h1>Manage Competitions</h1>
+
+<p><a href="/admin/dashboard">Back to Admin Dashboard</a></p>
+<p>
+    <a href="/admin/competitions/new/slalom">Create Slalom Competition</a>
+    |
+    <a href="/admin/competitions/new/biathlon">Create Biathlon Competition</a>
+</p>
+
+<p th:if="${successMessage}" th:text="${successMessage}" style="color: green;"></p>
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+
+<div th:if="${#lists.isEmpty(competitions)}">
+    <p>No competitions created yet.</p>
+</div>
+
+<table th:if="${!#lists.isEmpty(competitions)}" border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Gender</th>
+        <th>Date</th>
+        <th>Min Age</th>
+        <th>Olympics ID</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="competition : ${competitions}">
+        <td th:text="${competition.name}">Name</td>
+        <td th:text="${competition.competitionType}">Type</td>
+        <td th:text="${competition.genderCategory}">Gender</td>
+        <td th:text="${#temporals.format(competition.competitionDate, 'dd.MM.yyyy')}">01.01.2030</td>
+        <td th:text="${competition.minimumAge}">18</td>
+        <td th:text="${competition.olympicGamesId}">1</td>
+        <td>
+            <form th:action="@{/admin/competitions/{id}/status(id=${competition.id})}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <select name="status">
+                    <option th:each="statusValue : ${competitionStatuses}"
+                            th:value="${statusValue}"
+                            th:text="${statusValue}"
+                            th:selected="${statusValue == competition.status}">
+                    </option>
+                </select>
+                <button type="submit">Change</button>
+            </form>
+        </td>
+        <td>
+            <a th:href="@{/admin/competitions/{id}/edit(id=${competition.id})}">Edit</a>
+            <span th:if="${competition.competitionType == 'SlalomCompetition'}"> | </span>
+            <a th:if="${competition.competitionType == 'SlalomCompetition'}"
+               th:href="@{/admin/slalom/{id}(id=${competition.id})}">Manage Slalom</a>
+            <span th:if="${competition.competitionType == 'BiathlonCompetition'}"> | </span>
+            <a th:if="${competition.competitionType == 'BiathlonCompetition'}"
+               th:href="@{/admin/biathlon/{id}(id=${competition.id})}">Manage Biathlon</a>
+            <form th:action="@{/admin/competitions/{id}/delete(id=${competition.id})}" method="post" style="display: inline;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+

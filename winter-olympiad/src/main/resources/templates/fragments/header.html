@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="adminHeader">
+    <header>
+        <nav>
+            <a href="/admin/dashboard">Admin Dashboard</a> |
+            <a href="/admin/olympics">Olympic Games</a> |
+            <a href="/admin/competitions">Competitions</a> |
+            <a href="/statistics">Statistics</a> |
+            <a href="/olympics">Public Olympics</a> |
+            <a href="/competitions">Public Competitions</a>
+        </nav>
+        <form th:action="@{/logout}" method="post" style="margin-top: 8px;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit">Logout</button>
+        </form>
+        <hr/>
+    </header>
+</div>
+
+<div th:fragment="athleteHeader">
+    <header>
+        <nav>
+            <a href="/athlete/dashboard">Dashboard</a> |
+            <a href="/athlete/profile">My Profile</a> |
+            <a href="/athlete/registrations">My Registrations</a> |
+            <a href="/competitions">Competitions</a> |
+            <a href="/olympics">Olympic Games</a> |
+            <a href="/statistics">Statistics</a>
+        </nav>
+        <form th:action="@{/logout}" method="post" style="margin-top: 8px;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit">Logout</button>
+        </form>
+        <hr/>
+    </header>
+</div>
+</body>
+</html>
+

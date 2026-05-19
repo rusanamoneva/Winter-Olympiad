@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Olympic Games Details</title>
+</head>
+<body>
+<h1>Olympic Games Details</h1>
+
+<p><a href="/olympics">Back to Olympics List</a></p>
+
+<section>
+    <p><strong>Name:</strong> <span th:text="${olympics.name}">Name</span></p>
+    <p><strong>Location:</strong> <span th:text="${olympics.location}">Location</span></p>
+    <p><strong>Start Date:</strong> <span th:text="${#temporals.format(olympics.startDate, 'dd.MM.yyyy')}">01.01.2030</span></p>
+    <p><strong>End Date:</strong> <span th:text="${#temporals.format(olympics.endDate, 'dd.MM.yyyy')}">15.01.2030</span></p>
+</section>
+
+</body>
+</html>
+

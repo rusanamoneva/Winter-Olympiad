@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistics and Medals</title>
+</head>
+<body>
+<h1>Statistics and Medals</h1>
+
+<p><a href="/olympics">Olympic Games</a> | <a href="/competitions">Competitions</a></p>
+
+<p th:if="${successMessage}" th:text="${successMessage}" style="color: green;"></p>
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+<p th:if="${statsMessage}" th:text="${statsMessage}" style="color: #555;"></p>
+
+<section>
+    <h2>Select Olympic Games</h2>
+    <form action="/statistics" method="get">
+        <label>
+            Olympic Games:
+            <select name="olympiadId">
+                <option value="">Select olympic games</option>
+                <option th:each="olympics : ${olympics}"
+                        th:value="${olympics.id}"
+                        th:text="${olympics.name + ' - ' + olympics.location}"
+                        th:selected="${selectedOlympiadId != null && selectedOlympiadId == olympics.id}">
+                </option>
+            </select>
+        </label>
+        <button type="submit">Load Stats</button>
+    </form>
+</section>
+
+<section>
+    <h2>Average Athlete Age</h2>
+    <p>
+        <strong>Average:</strong> <span th:text="${averageAge.averageAge}">0.00</span>
+        | <strong>Participants:</strong> <span th:text="${averageAge.participantsCount}">0</span>
+    </p>
+</section>
+
+<section>
+    <h2>Age Extremes (Medalists)</h2>
+    <div th:if="${youngestMedalist != null}">
+        <p>
+            <strong>Youngest:</strong>
+            <span th:text="${youngestMedalist.athleteName}">Athlete</span>
+            (<span th:text="${youngestMedalist.age}">18</span>)
+        </p>
+    </div>
+    <div th:if="${oldestMedalist != null}">
+        <p>
+            <strong>Oldest:</strong>
+            <span th:text="${oldestMedalist.athleteName}">Athlete</span>
+            (<span th:text="${oldestMedalist.age}">35</span>)
+        </p>
+    </div>
+</section>
+
+<section>
+    <h2>Medals by Country</h2>
+    <div th:if="${#lists.isEmpty(medalsByCountry)}">
+        <p>No medals assigned yet.</p>
+    </div>
+    <table th:if="${!#lists.isEmpty(medalsByCountry)}" border="1" cellpadding="6" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Country</th>
+            <th>Gold</th>
+            <th>Silver</th>
+            <th>Bronze</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${medalsByCountry}">
+            <td th:text="${entry.country}">Country</td>
+            <td th:text="${entry.gold}">0</td>
+            <td th:text="${entry.silver}">0</td>
+            <td th:text="${entry.bronze}">0</td>
+            <td th:text="${entry.total}">0</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Competition Summary and Medals</h2>
+    <form action="/statistics" method="get">
+        <input type="hidden" name="olympiadId" th:value="${selectedOlympiadId}"/>
+        <label>
+            Competition:
+            <select name="competitionId">
+                <option value="">Select competition</option>
+                <option th:each="competition : ${competitions}"
+                        th:value="${competition.id}"
+                        th:text="${competition.name + ' (' + competition.competitionType + ')'}"
+                        th:selected="${selectedCompetitionId != null && selectedCompetitionId == competition.id}">
+                </option>
+            </select>
+        </label>
+        <button type="submit">Show Summary</button>
+    </form>
+
+    <div th:if="${competitionSummary != null}">
+        <p><strong>Name:</strong> <span th:text="${competitionSummary.competitionName}">Competition</span></p>
+        <p><strong>Type:</strong> <span th:text="${competitionSummary.competitionType}">Type</span></p>
+        <p><strong>Date:</strong> <span th:text="${#temporals.format(competitionSummary.competitionDate, 'dd.MM.yyyy')}">01.01.2030</span></p>
+
+        <h3>Top 3 Athletes</h3>
+        <ul>
+            <li th:each="name : ${competitionSummary.top3Athletes}" th:text="${name}">Athlete Name</li>
+        </ul>
+
+        <form th:action="@{/admin/medals/{competitionId}/assign(competitionId=${competitionSummary.competitionId})}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit">Assign / Refresh Medals</button>
+        </form>
+
+        <h3>Assigned Medals</h3>
+        <div th:if="${#lists.isEmpty(competitionMedals)}">
+            <p>No medals assigned for this competition.</p>
+        </div>
+        <table th:if="${!#lists.isEmpty(competitionMedals)}" border="1" cellpadding="6" cellspacing="0">
+            <thead>
+            <tr>
+                <th>Medal</th>
+                <th>Athlete</th>
+                <th>Country</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="medal : ${competitionMedals}">
+                <td th:text="${medal.medalType}">GOLD</td>
+                <td th:text="${medal.athleteFullName}">Athlete</td>
+                <td th:text="${medal.country}">Country</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+</body>
+</html>
+

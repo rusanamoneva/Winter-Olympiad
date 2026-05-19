@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Athlete Dashboard</title>
+</head>
+<body>
+<div th:replace="fragments/header :: athleteHeader"></div>
+
+<h1>Athlete Dashboard</h1>
+
+<p>Quick access to your athlete tools.</p>
+
+<ul>
+    <li><a href="/athlete/profile">My Profile</a></li>
+    <li><a href="/athlete/registrations">My Registrations</a></li>
+    <li><a href="/competitions">Competitions</a></li>
+    <li><a href="/olympics">Olympic Games</a></li>
+    <li><a href="/statistics">Statistics</a></li>
+</ul>
+</body>
+</html>
